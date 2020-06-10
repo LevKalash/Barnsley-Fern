@@ -9,7 +9,7 @@ pygame.init()  # Standart pygame initialisation
 
 WIDTH = 600
 HEIGHT = 800  # setting window size
-detalisation = 30000  # setting detalisation of image (number of dots)
+detalisation = 50000  # setting detalisation of image (number of dots)
 
 win = pygame.display.set_mode((WIDTH, HEIGHT), FULLSCREEN)  # Making window
 
@@ -17,35 +17,26 @@ BGCOLOR = (0, 0, 0)
 FERNCOLOR = (0, 166, 17)  # setting colors
 
 
+cooficients = [
+    {'x':[0, 0], 'y':[0, 0.16], 'e':0},
+    {'x':[0.85, 0.04], 'y':[-0.04, 0.85], 'e':1.6},
+    {'x':[0.20, -0.26], 'y':[0.23, 0.22], 'e':1.6},
+    {'x':[-0.15, 0.28], 'y':[0.26, 0.24], 'e':0.44}
+]
+
+
+def NewDotCoordSetter(point, coofs):
+    x = coofs['x'][0] * point[0] + coofs['x'][1] * point[1]
+    y = coofs['y'][0] * point[0] + coofs['y'][1] * point[1] + coofs["e"]
+    print(x, y)
+    return x, y
+
+
 def convert_point(tup):
     tup = list(tup)
     tup[0] = (tup[0] + 2.5) * ((WIDTH - 20)/5)
     tup[1] = HEIGHT - tup[1] * ((HEIGHT - 20)/10) - 10
-    return tuple(tup)
-
-
-def f1(point):
-    x = 0
-    y = 0.16 * point[1]
-    return x, y
-
-
-def f2(point):
-    x = 0.85 * point[0] + 0.04 * point[1]
-    y = -0.04 * point[0] + 0.85 * point[1] + 1.6
-    return x, y
-
-
-def f3(point):
-    x = 0.20 * point[0] - 0.26 * point[1]
-    y = 0.23 * point[0] + 0.22 * point[1] + 1.6
-    return x, y
-
-
-def f4(point):
-    x = -0.15 * point[0] + 0.28 * point[1]
-    y = 0.26 * point[0] + 0.24 * point[1] + 0.44
-    return x, y
+    return tuple(tup)  # Понять что за коэффициенты добавляются вычитаются и почему делится именно на это
 
 
 def main():
@@ -56,22 +47,16 @@ def main():
         rand = random.random()
 
         pygame.draw.rect(win, BGCOLOR, (0, 0, 300, 30))
-        win.blit(pygame.font.Font(None, 20).render(f"{i}/{detalisation}", 0, (255, 255, 255)), (5, 5))
+        win.blit(pygame.font.Font(None, 20).render(f'{i}/{detalisation}\n Press "q" to quit, True, (255, 255, 255)), (5, 5))
 
         if rand <= 0.01:
-            point = f1(point)
+            point = NewDotCoordSetter(point, cooficients[0])
         elif rand <= 0.86:
-            point = f2(point)
+            point = NewDotCoordSetter(point, cooficients[1])
         elif rand <= 0.93:
-            point = f3(point)
+            point = NewDotCoordSetter(point, cooficients[2])
         else:
-            point = f4(point)
-        """   
-        if   rand <= 0.01: point = f1(point)
-        elif rand >  0.01 and rand <= 0.86: point = f2(point)
-        elif rand >  0.86 and rand <= 0.93: point = f3(point)
-        elif rand >  0.95 and rand <= 1.00: point = f4(point)
-        """
+            point = NewDotCoordSetter(point, cooficients[3])
 
         events = pygame.event.get()
         for event in events:
